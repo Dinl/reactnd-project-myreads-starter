@@ -73,15 +73,20 @@ body, .app {
   display: flex;
   box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 0 6px rgba(0,0,0,0.23);
 }
+
 .search-books-input-wrapper {
   flex: 1;
-  background: #e9e;
+  background: white;
+  text-align: center;
+  height: 60px;
+  line-height: 60px;
 }
-.search-books-bar input {
-  width: 100%;
-  padding: 15px 10px;
+.search-books-input-wrapper input {
+  width: 80%;
+  padding: 10px 10px;
   font-size: 1.25em;
-  border: none;
+  border: solid 1px gray;
+  border-radius: 25px;
   outline: none;
 }
 
