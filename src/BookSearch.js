@@ -4,7 +4,7 @@ import * as BooksAPI from './BooksAPI'
 import Book from './Book.js'
 import './App.css'
 
-class BookDetail extends Component {
+class BookSearch extends Component {
 
     state = {
 		bookList: [],
@@ -28,9 +28,11 @@ class BookDetail extends Component {
 
         return (
             <div className="search-books">
-                <div className="search-books-bar">
-                    <Link className="close-search" to="/">Close</Link>
-                </div>
+				<div className="list-books-title">
+					<h1>Awesome Books</h1>
+					<Link className="close-search" to="/">Close</Link>
+				</div>
+
 
                 <div className="search-books-input-wrapper">
                     <input type="text" 
@@ -40,7 +42,7 @@ class BookDetail extends Component {
                 <div className="bookshelf">
                     <div className="bookshelf-books">
                         <ol className="books-grid">
-                            {bookList.map( (book) => (
+                            {Array.isArray(bookList) && bookList.map( (book) => (
                                 <li key={`${book.id}_li`}>
                                     <Book key={book.id} 
                                             details={book} 
@@ -49,6 +51,9 @@ class BookDetail extends Component {
                                 </li>
                             ))}
                         </ol>
+						{!Array.isArray(bookList) && 
+							<div><span>No results</span></div>
+						}
                     </div>
                 </div>
             </div>            
@@ -56,4 +61,4 @@ class BookDetail extends Component {
     }
 }
 
-export default BookDetail;
+export default BookSearch;
