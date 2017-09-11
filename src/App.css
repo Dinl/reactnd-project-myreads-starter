@@ -75,19 +75,31 @@ body, .app {
 }
 
 .search-books-input-wrapper {
-  flex: 1;
+  display: flex;
   background: white;
-  text-align: center;
+  justify-content: center;
   height: 60px;
   line-height: 60px;
+  margin-top: 30px;
+  margin-bottom: 20px;
 }
 .search-books-input-wrapper input {
-  width: 80%;
+  width: 60%;
   padding: 10px 10px;
+  margin-right: 20px;
   font-size: 1.25em;
   border: solid 1px gray;
   border-radius: 25px;
   outline: none;
+}
+.search-books-button {
+  width: 10%;
+  border-radius: 30px;
+  padding: 0px 10px;
+  font-size: 1.25em;
+  background: #2e7d32;
+  text-align: center;
+  color: white;
 }
 
 .close-search {

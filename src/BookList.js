@@ -8,7 +8,7 @@ import './App.css'
 class BookList extends Component {
 
     state = {
-        bookList: [],
+		bookList: [],
 		query: '',
 		filter: ''
     }
@@ -19,7 +19,14 @@ class BookList extends Component {
 	
 	updateFilter= (filter) => {
         this.setState({ filter: filter.trim() });
-    }
+	}
+	
+	updateBook= (id, shelf) => {
+		const index = this.state.bookList.findIndex(book => book.id === id);
+		let bookList = this.state.bookList;
+		bookList[index].shelf = shelf;
+		this.setState({bookList});
+	}
 
     clearQuery = () => {
         this.setState({ query: '' });
@@ -33,23 +40,36 @@ class BookList extends Component {
     }
 
     render () {
+		//Get query, filter and bookList
+		const { filter, bookList } = this.state;
 
-		const { query, bookList } = this.state;
-		const Books_Reading = bookList.filter((book) => (book.shelf === 'currentlyReading'));
-		const Books_Readed = bookList.filter((book) => (book.shelf === 'read'));
-		const Books_ToRead = bookList.filter((book) => (book.shelf === 'wantToRead'));
+		//Filter the original list
+		const filterBookList = bookList.filter((book) => {
+			return (book.title.toLowerCase().indexOf(filter.toLowerCase()) !== -1) ||
+				(book.authors.join().toLowerCase().indexOf(filter.toLowerCase()) !== -1);
+		});
+
+		const Books_Reading = filterBookList.filter((book) => (book.shelf === 'currentlyReading'));
+		const Books_Readed = filterBookList.filter((book) => (book.shelf === 'read'));
+		const Books_ToRead = filterBookList.filter((book) => (book.shelf === 'wantToRead'));
 
         return (
             <div className="list-books-content">
                 <div className="search-books-input-wrapper">
-                    <input type="text" placeholder="Filter by title or author"/>
+                    <input type="text" 
+						   placeholder="Filter by title or author"
+						   onChange={(event) => this.updateFilter(event.target.value)} />
+					<span>Or...</span>
+					<div className="search-books-button">
+						<Link to="/search">Search</Link>
+					</div>
                 </div>
 
 				<Tabs>
 					<TabList>
-					<Tab>Currently Reading</Tab>
-					<Tab>Want to Read</Tab>
-					<Tab>Read</Tab>
+					<Tab>Currently Reading ({Books_Reading.length})</Tab>
+					<Tab>Read ({Books_Readed.length})</Tab>
+					<Tab>Want to Read ({Books_ToRead.length})</Tab>
 					</TabList>
 						
 					<TabPanel>
@@ -58,7 +78,10 @@ class BookList extends Component {
 								<ol className="books-grid">
 									{Books_Reading.map( (book) => (
 										<li key={`${book.id}_li`}>
-											<Book key={book.id} details={book} />
+											<Book key={book.id} 
+												  details={book} 
+												  filter={filter}
+												  update={this.updateBook}  />
 										</li>
 									))}
 								</ol>
@@ -71,7 +94,10 @@ class BookList extends Component {
 								<ol className="books-grid">
 									{Books_Readed.map( (book) => (
 										<li key={`${book.id}_li`}>
-											<Book key={book.id} details={book} />
+											<Book key={book.id} 
+												  details={book} 
+												  filter={filter}
+												  update={this.updateBook} />
 										</li>
 									))}
 								</ol>
@@ -84,7 +110,10 @@ class BookList extends Component {
 								<ol className="books-grid">
 									{Books_ToRead.map( (book) => (
 										<li key={`${book.id}_li`}>
-											<Book key={book.id} details={book} />
+											<Book key={book.id} 
+												  details={book} 
+												  filter={filter}
+												  update={this.updateBook} />
 										</li>
 									))}
 								</ol>
@@ -92,6 +121,11 @@ class BookList extends Component {
 						</div>
 					</TabPanel>
 				</Tabs>
+				
+				
+				<div className="open-search">
+					<Link to="/search">Add a book</Link>
+				</div>
             </div>
         )
     }
