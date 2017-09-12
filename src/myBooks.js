@@ -22,10 +22,12 @@ class myBooks extends Component {
 	}
 	
 	updateBook= (id, shelf) => {
-		const index = this.state.bookList.findIndex(book => book.id === id);
-		let bookList = this.state.bookList;
-		bookList[index].shelf = shelf;
-		this.setState({bookList});
+		BooksAPI.update({id}, shelf).then((updates) => {
+			const index = this.state.bookList.findIndex(book => book.id === id);
+			let bookList = this.state.bookList;
+			bookList[index].shelf = shelf;
+			this.setState({bookList});
+		})
 	}
 
     clearQuery = () => {
