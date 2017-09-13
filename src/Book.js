@@ -11,15 +11,19 @@ class Book extends Component {
 
     render () {
 
-        //Get the book object from properties
+        //Get the book object from properties 
         const { details, filter } = this.props;
 
         return (
             <div className="book">
                 <div className="book-top">
+                    
                 <div className="book-cover" 
-                    style={{ width: 128, height: 193, 
-                            backgroundImage: `url(${details.imageLinks.thumbnail})` }}></div>
+                    style={{ backgroundImage: `url(${details.imageLinks.thumbnail})` }}>
+                    {details.imageLinks.thumbnail === undefined && 
+                        <div>No image found</div>
+                    }
+                </div>
                 <div className="book-shelf-changer">
                     <select onChange={this.changeReadStatus}>
                     <option value="none" disabled>Move to...</option>

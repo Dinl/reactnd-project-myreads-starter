@@ -1,16 +1,18 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import Loader from 'react-loader'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import * as BooksAPI from './BooksAPI'
 import BookGrid from './BookGrid.js'
 import './App.css'
 
 class myBooks extends Component {
-
+	
     state = {
 		bookList: [],
 		query: '',
-		filter: ''
+		filter: '',
+		loaded: false
     }
 
     updateQuery= (query) => {
@@ -22,11 +24,12 @@ class myBooks extends Component {
 	}
 	
 	updateBook= (id, shelf) => {
+		this.setState({loaded: false});
 		BooksAPI.update({id}, shelf).then((updates) => {
 			const index = this.state.bookList.findIndex(book => book.id === id);
 			let bookList = this.state.bookList;
 			bookList[index].shelf = shelf;
-			this.setState({bookList});
+			this.setState({bookList, loaded: true});
 		})
 	}
 
@@ -35,8 +38,9 @@ class myBooks extends Component {
     }
 
     componentDidMount() {
+		this.setState({loaded: false});
         BooksAPI.getAll().then((bookList) => {
-            this.setState({bookList})
+			this.setState({bookList, loaded: true});
         })
     }
 
@@ -79,13 +83,19 @@ class myBooks extends Component {
 						</TabList>
 							
 						<TabPanel>
-							<BookGrid filter={filter} bookList={Books_Reading} updateBook={this.updateBook} />
+							<Loader loaded={this.state.loaded}>
+								<BookGrid filter={filter} bookList={Books_Reading} updateBook={this.updateBook} />
+							</Loader>
 						</TabPanel>
 						<TabPanel>
-							<BookGrid filter={filter} bookList={Books_Readed} updateBook={this.updateBook} />
+							<Loader loaded={this.state.loaded}>
+								<BookGrid filter={filter} bookList={Books_Readed} updateBook={this.updateBook} />
+							</Loader>
 						</TabPanel>
 						<TabPanel>
-							<BookGrid filter={filter} bookList={Books_ToRead} updateBook={this.updateBook} />
+							<Loader loaded={this.state.loaded}>
+								<BookGrid filter={filter} bookList={Books_ToRead} updateBook={this.updateBook} />
+							</Loader>
 						</TabPanel>
 					</Tabs>
 					
