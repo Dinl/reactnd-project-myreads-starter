@@ -13,7 +13,7 @@ class BookGrid extends Component {
 			<div className="bookshelf">
 				<div className="bookshelf-books">
 					<ol className="books-grid">
-						{bookList.map( (book) => (
+						{bookList && Array.isArray(bookList) && bookList.map( (book) => (
 							<li key={`${book.id}_li`}>
 								<Book key={book.id} 
 									details={book} 

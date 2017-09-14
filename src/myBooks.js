@@ -51,7 +51,7 @@ class myBooks extends Component {
 		//Filter the original list
 		const filterBookList = bookList.filter((book) => {
 			return (book.title.toLowerCase().indexOf(filter.toLowerCase()) !== -1) ||
-				(book.authors.join().toLowerCase().indexOf(filter.toLowerCase()) !== -1);
+				(book.authors && book.authors.join().toLowerCase().indexOf(filter.toLowerCase()) !== -1);
 		});
 
 		const Books_Reading = filterBookList.filter((book) => (book.shelf === 'currentlyReading'));
@@ -71,7 +71,7 @@ class myBooks extends Component {
 							onChange={(event) => this.updateFilter(event.target.value)} />
 						<span>Or...</span>
 						<div className="search-books-button">
-							<Link to="/search">Search</Link>
+							<Link to={`/search/?query=${filter}`}>Search</Link>
 						</div>
 					</div>
 
