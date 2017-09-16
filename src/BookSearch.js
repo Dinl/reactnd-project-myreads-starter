@@ -39,12 +39,16 @@ class BookSearch extends Component {
         history.push('/search/?query='+query);
     }
 
-    componentDidMount() {
-        const history = createHistory();
-        if (history.location.search) {
-            const params = this.getUrlParams(history.location.search)
-            this.updateQuery(params["query"]);
-        }
+    componentDidMount() {        
+        const search = this.props.location.search.substring(1);
+        let parameters = {};
+        search.split("&").map((param) => {
+            const [key, value] = param.split("=")
+            parameters[key] = value;
+            return value;
+        });
+        if(parameters.hasOwnProperty('query'))
+            this.updateQuery(parameters['query']);
     }
 
     render () {
@@ -62,6 +66,7 @@ class BookSearch extends Component {
 
                 <div className="search-books-input-wrapper">
                     <input type="text" 
+                            value={query}
                             placeholder="Find by title or author"
                             onChange={(event) => this.updateQuery(event.target.value)} />
                 </div>
