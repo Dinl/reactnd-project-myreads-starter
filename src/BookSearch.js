@@ -11,7 +11,8 @@ class BookSearch extends Component {
     state = {
 		bookList: [],
         query: '',
-        loaded: true
+        loaded: true,
+        typingTimeOut : 0
     }
 
     addBook = (id, shelf) => {
@@ -25,15 +26,26 @@ class BookSearch extends Component {
     }
 
     updateQuery= (query) => {
-        query = query.trim();
-        this.setState({ query, loaded: false });
-        if(query !== ""){
-            BooksAPI.search(query, 20).then((bookList) => {
-                this.setState({ bookList, loaded: true })
-            })
-        } else {
-            this.setState({ bookList: [], loaded: true })
+        //Check the timeout
+        if(this.state.typingTimeOut){
+            clearTimeout(this.state.typingTimeOut);
         }
+        //Then update the query with async function
+        query = query.trim();
+        this.setState({ 
+            query, 
+            loaded: false,
+            typingTimeOut: setTimeout(() => {
+                if(query !== ""){
+                    BooksAPI.search(query, 20).then((bookList) => {
+                        this.setState({ bookList, loaded: true })
+                    })
+                } else {
+                    this.setState({ bookList: [], loaded: true })
+                }
+            }, 500)
+         });
+        
 
         const history = createHistory();
         history.push('/search/?query='+query);
