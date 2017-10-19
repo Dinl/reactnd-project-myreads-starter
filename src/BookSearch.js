@@ -34,7 +34,12 @@ class BookSearch extends Component {
 
         if(query !== ""){
             BooksAPI.search(query, 20).then((bookList) => {
-                this.setState({ bookList, loaded: true })
+                this.setState({ 
+                    bookList: bookList.error !== undefined ? bookList : bookList.map(book => {
+                        book.shelf = "none";
+                        return book;
+                    }), 
+                    loaded: true })
             })
         } else {
             this.setState({ bookList: [], loaded: true })
