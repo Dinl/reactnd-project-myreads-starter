@@ -2,7 +2,8 @@
   "dependencies": {
     "history": "^4.7.2",
     "prop-types": "^15.5.8",
-    "react": "^15.5.4",
+    "react": "^15.6.2",
+    "react-debounce-input": "^3.1.0",
     "react-dom": "^15.5.4",
     "react-highlight-words": "^0.8.1",
     "react-loader": "^2.4.2",

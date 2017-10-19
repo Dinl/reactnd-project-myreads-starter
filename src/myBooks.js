@@ -26,10 +26,15 @@ class myBooks extends Component {
 	updateBook= (id, shelf) => {
 		this.setState({loaded: false});
 		BooksAPI.update({id}, shelf).then((updates) => {
-			const index = this.state.bookList.findIndex(book => book.id === id);
-			let bookList = this.state.bookList;
-			bookList[index].shelf = shelf;
-			this.setState({bookList, loaded: true});
+			this.setState(prevState => ({
+				bookList: prevState.bookList.map(book => {
+					if(book.id === id){
+						book.shelf = shelf
+					}
+					return book;
+				}),
+				loaded: true
+			}));
 		})
 	}
 

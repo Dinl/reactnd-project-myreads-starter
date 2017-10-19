@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import {DebounceInput} from 'react-debounce-input';
 import Loader from 'react-loader'
 import createHistory from 'history/createBrowserHistory'
 import * as BooksAPI from './BooksAPI'
@@ -11,41 +12,33 @@ class BookSearch extends Component {
     state = {
 		bookList: [],
         query: '',
-        loaded: true,
-        typingTimeOut : 0
+        loaded: true
     }
 
     addBook = (id, shelf) => {
         this.setState({loaded: false});
         BooksAPI.update({id}, shelf).then((updates) => {
-            const index = this.state.bookList.findIndex(book => book.id === id);
-            let bookList = this.state.bookList;
-            bookList.splice(index, 1);
-            this.setState({bookList, loaded: true});
+            this.setState(prevState => (
+                {
+                    bookList: prevState.bookList.filter(book => book.id !== id),
+                    loaded: true
+                }
+            ));
         })
     }
 
     updateQuery= (query) => {
-        //Check the timeout
-        if(this.state.typingTimeOut){
-            clearTimeout(this.state.typingTimeOut);
-        }
         //Then update the query with async function
         query = query.trim();
-        this.setState({ 
-            query, 
-            loaded: false,
-            typingTimeOut: setTimeout(() => {
-                if(query !== ""){
-                    BooksAPI.search(query, 20).then((bookList) => {
-                        this.setState({ bookList, loaded: true })
-                    })
-                } else {
-                    this.setState({ bookList: [], loaded: true })
-                }
-            }, 500)
-         });
-        
+        this.setState({ query, loaded: false });
+
+        if(query !== ""){
+            BooksAPI.search(query, 20).then((bookList) => {
+                this.setState({ bookList, loaded: true })
+            })
+        } else {
+            this.setState({ bookList: [], loaded: true })
+        }
 
         const history = createHistory();
         history.push('/search/?query='+query);
@@ -77,7 +70,9 @@ class BookSearch extends Component {
 
 
                 <div className="search-books-input-wrapper">
-                    <input type="text" 
+                    <DebounceInput type="text" 
+                            minLength={1}
+                            debounceTimeout={500}
                             value={query}
                             placeholder="Find by title or author"
                             onChange={(event) => this.updateQuery(event.target.value)} />
