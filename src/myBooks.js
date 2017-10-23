@@ -2,17 +2,14 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import Loader from 'react-loader'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import * as BooksAPI from './BooksAPI'
 import BookGrid from './BookGrid.js'
 import './App.css'
 
 class myBooks extends Component {
 	
     state = {
-		bookList: [],
 		query: '',
-		filter: '',
-		loaded: false
+		filter: ''
     }
 
     updateQuery= (query) => {
@@ -22,43 +19,22 @@ class myBooks extends Component {
 	updateFilter= (filter) => {
         this.setState({ filter: filter.trim() });
 	}
-	
-	updateBook= (id, shelf) => {
-		this.setState({loaded: false});
-		BooksAPI.update({id}, shelf).then((updates) => {
-			this.setState(prevState => ({
-				bookList: prevState.bookList.map(book => {
-					if(book.id === id){
-						book.shelf = shelf
-					}
-					return book;
-				}),
-				loaded: true
-			}));
-		})
-	}
 
     clearQuery = () => {
         this.setState({ query: '' });
     }
 
-    componentDidMount() {
-		this.setState({loaded: false});
-        BooksAPI.getAll().then((bookList) => {
-			this.setState({bookList, loaded: true});
-        })
-    }
-
     render () {
 		//Get query, filter and bookList
-		const { filter, bookList } = this.state;
+		const { filter } = this.state;
+		const { bookList, loaded } = this.props;
 
 		//Filter the original list
 		const filterBookList = bookList.filter((book) => {
 			return (book.title.toLowerCase().indexOf(filter.toLowerCase()) !== -1) ||
 				(book.authors && book.authors.join().toLowerCase().indexOf(filter.toLowerCase()) !== -1);
 		});
-
+		
 		const Books_Reading = filterBookList.filter((book) => (book.shelf === 'currentlyReading'));
 		const Books_Readed = filterBookList.filter((book) => (book.shelf === 'read'));
 		const Books_ToRead = filterBookList.filter((book) => (book.shelf === 'wantToRead'));
@@ -88,18 +64,18 @@ class myBooks extends Component {
 						</TabList>
 							
 						<TabPanel>
-							<Loader loaded={this.state.loaded}>
-								<BookGrid filter={filter} bookList={Books_Reading} updateBook={this.updateBook} />
+							<Loader loaded={loaded}>
+								<BookGrid filter={filter} bookList={Books_Reading} updateBook={this.props.updateBook} />
 							</Loader>
 						</TabPanel>
 						<TabPanel>
-							<Loader loaded={this.state.loaded}>
-								<BookGrid filter={filter} bookList={Books_Readed} updateBook={this.updateBook} />
+							<Loader loaded={loaded}>
+								<BookGrid filter={filter} bookList={Books_Readed} updateBook={this.props.updateBook} />
 							</Loader>
 						</TabPanel>
 						<TabPanel>
-							<Loader loaded={this.state.loaded}>
-								<BookGrid filter={filter} bookList={Books_ToRead} updateBook={this.updateBook} />
+							<Loader loaded={loaded}>
+								<BookGrid filter={filter} bookList={Books_ToRead} updateBook={this.props.updateBook} />
 							</Loader>
 						</TabPanel>
 					</Tabs>

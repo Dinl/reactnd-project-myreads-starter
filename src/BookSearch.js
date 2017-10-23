@@ -3,20 +3,44 @@ import { Link } from 'react-router-dom'
 import {DebounceInput} from 'react-debounce-input';
 import Loader from 'react-loader'
 import createHistory from 'history/createBrowserHistory'
+import { addUrlProps, replaceInUrlQuery } from 'react-url-query';
+import PropTypes from 'prop-types';
 import * as BooksAPI from './BooksAPI'
 import BookGrid from './BookGrid.js'
 import './App.css'
 
-class BookSearch extends Component {
+function mapUrlToProps(url, props) {
+    return {
+        query: url.query,
+    };
+}
 
+function mapUrlChangeHandlersToProps(props) {
+    return {
+        onChangeQuery: (value) => replaceInUrlQuery('query', value),
+    }
+}
+
+class BookSearch extends Component {
+    
     state = {
 		bookList: [],
         query: '',
         loaded: true
     }
 
+    static propTypes = {
+        query: PropTypes.string
+    }
+
+    static defaultProps = {
+        query: ""
+    }
+
     addBook = (id, shelf) => {
         this.setState({loaded: false});
+        this.props.addBook(this.state.find((book) => book.id === id));
+        
         BooksAPI.update({id}, shelf).then((updates) => {
             this.setState(prevState => (
                 {
@@ -34,9 +58,12 @@ class BookSearch extends Component {
 
         if(query !== ""){
             BooksAPI.search(query, 20).then((bookList) => {
+                const userBookList = this.props.bookList;
                 this.setState({ 
                     bookList: bookList.error !== undefined ? bookList : bookList.map(book => {
-                        book.shelf = "none";
+                        const index = userBookList.findIndex((userBook) => userBook.id === book.id);
+                        book.shelf = index >= 0 ? userBookList[index].shelf : "none";
+
                         return book;
                     }), 
                     loaded: true })
@@ -49,16 +76,10 @@ class BookSearch extends Component {
         history.push('/search/?query='+query);
     }
 
-    componentDidMount() {        
-        const search = this.props.location.search.substring(1);
-        let parameters = {};
-        search.split("&").map((param) => {
-            const [key, value] = param.split("=")
-            parameters[key] = value;
-            return value;
-        });
-        if(parameters.hasOwnProperty('query'))
-            this.updateQuery(parameters['query']);
+    componentDidMount() {
+        const search = this.props.query;
+        if(search && search !== "")
+            this.updateQuery(this.props.query);
     }
 
     render () {
@@ -91,4 +112,4 @@ class BookSearch extends Component {
     }
 }
 
-export default BookSearch;
+export default addUrlProps({ mapUrlToProps, mapUrlChangeHandlersToProps })(BookSearch);;
