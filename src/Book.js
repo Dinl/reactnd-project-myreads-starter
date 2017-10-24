@@ -13,6 +13,9 @@ class Book extends Component {
 
         //Get the book object from properties 
         const { details, filter } = this.props;
+        if(details.imageLinks === undefined) {
+            details.imageLinks = {thumbnail: 'http://via.placeholder.com/128x193?text=No%20Cover'}
+        }            
 
         return (
             <div className="book">

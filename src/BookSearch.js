@@ -39,7 +39,7 @@ class BookSearch extends Component {
 
     addBook = (id, shelf) => {
         this.setState({loaded: false});
-        this.props.addBook(this.state.find((book) => book.id === id));
+        this.props.addBook(this.state.bookList.find((book) => book.id === id));
         
         BooksAPI.update({id}, shelf).then((updates) => {
             this.setState(prevState => (
