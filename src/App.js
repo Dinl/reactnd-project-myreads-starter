@@ -14,10 +14,11 @@ class BooksApp extends Component {
 		loaded: false
 	}
 
-	addBook = (book) => {
-		this.setState(prevState => ({
-			bookList: prevState.bookList.push(book)
-		}));
+	addBook = (book, shelf) => {
+		book.shelf = shelf;
+		this.setState({
+			bookList: this.state.bookList.concat(book)
+		});
 	}
 
 	updateBook= (id, shelf) => {
@@ -48,7 +49,6 @@ class BooksApp extends Component {
 	render() {
 		//Load via constants
 		const { bookList, loaded } = this.state;
-
     return (
 		<div className="app">
 			<Route exact path="/" render={() => <MyBooks bookList={bookList} loaded={loaded} updateBook={this.updateBook} />} />
