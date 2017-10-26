@@ -16,9 +16,15 @@ class BooksApp extends Component {
 
 	addBook = (book, shelf) => {
 		book.shelf = shelf;
-		this.setState({
-			bookList: this.state.bookList.concat(book)
-		});
+		const matchBook = this.state.bookList.find((userBook) => userBook.id === book.id);
+		if(matchBook){
+			this.updateBook(book.id, shelf);
+		} 
+		else {
+			this.setState({
+				bookList: this.state.bookList.concat(book)
+			});
+		}
 	}
 
 	updateBook= (id, shelf) => {
